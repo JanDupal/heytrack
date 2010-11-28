@@ -21,11 +21,16 @@
 
 #include "Mpris1.h"
 
+#include <QDebug>
+
 namespace HeyTrack { namespace Core {
 
 VlcPlayer::VlcPlayer(QObject* parent): AbstractPlayer(parent) {
     playerInterface = new QDBusInterface("org.mpris.vlc", "/Player", "", QDBusConnection::sessionBus(), this);
     tracklistInterface = new QDBusInterface("org.mpris.vlc", "/TrackList", "", QDBusConnection::sessionBus(), this);
+
+    Q_ASSERT(playerInterface->connection().connect("org.mpris.vlc", "/Player", "", "Prop",
+                                          this, SLOT(mprisPropertyChanged(const QString &, const QDBusVariant &))));
 }
 
 bool VlcPlayer::isPlaying() {
@@ -43,6 +48,19 @@ void VlcPlayer::play(const QString& url) {
 
 void VlcPlayer::stop() {
     playerInterface->call("Stop");
+}
+
+void VlcPlayer::mprisPropertyChanged(const QString& name, const QDBusVariant& value)
+{
+    qDebug() << "Prop. changed! to: " << value.variant().toString();
+    if(name == "PlaybackStatus") {
+        QString state = value.variant().toString();
+
+        if(state == "Playing")
+            emit stateChanged(PlayingState);
+        else
+            emit stateChanged(StoppedState);
+    }
 }
 
 }}

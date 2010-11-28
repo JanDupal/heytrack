@@ -25,6 +25,12 @@
 
 namespace HeyTrack { namespace Core {
 
+/** @brief Player state */
+enum PlayerState{
+    StoppedState,
+    PlayingState
+};
+
 /** @brief Player interface */
 class AbstractPlayer: public QObject {
     Q_OBJECT
@@ -49,6 +55,9 @@ class AbstractPlayer: public QObject {
          * @brief Stop playing
          */
         virtual void stop() = 0;
+
+    signals:
+        void stateChanged(Core::PlayerState state);
 
     private:
         static QHash<QString, AbstractPlayer* (*)(QObject*)> _players;

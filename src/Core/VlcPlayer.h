@@ -22,10 +22,13 @@
 #include "AbstractPlayer.h"
 
 class QDBusInterface;
+class QDBusVariant;
 
 namespace HeyTrack { namespace Core {
 
 class VlcPlayer: public AbstractPlayer {
+    Q_OBJECT
+
     PLAYER_DEFINE(VlcPlayer)
 
     public:
@@ -33,6 +36,9 @@ class VlcPlayer: public AbstractPlayer {
         virtual bool isPlaying();
         virtual void play(const QString& url);
         virtual void stop();
+
+    private slots:
+        void mprisPropertyChanged(const QString &name, const QDBusVariant &value);
 
     private:
         QDBusInterface *playerInterface,

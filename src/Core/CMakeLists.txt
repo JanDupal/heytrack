@@ -25,6 +25,7 @@ set(HeyTrack_Core_HDRS
     StationModel.h
     FormatModel.h
     GenreModel.h
+    VlcPlayer.h
 )
 
 if(NOT WIN32)

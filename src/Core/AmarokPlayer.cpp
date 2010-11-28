@@ -21,11 +21,16 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtDBus/QDBusInterface>
 
+#include <QtDebug>
+
 namespace HeyTrack { namespace Core {
 
 AmarokPlayer::AmarokPlayer(QObject* parent): AbstractPlayer(parent), manager(new QNetworkAccessManager(this)) {
     playerInterface = new QDBusInterface("org.kde.amarok", "/Player", "", QDBusConnection::sessionBus(), this);
     tracklistInterface = new QDBusInterface("org.kde.amarok", "/TrackList", "", QDBusConnection::sessionBus(), this);
+
+    Q_ASSERT(playerInterface->connection().connect("org.kde.amarok", "/Player", "", "PropertyChanged",
+                                          this, SLOT(mprisPropertyChanged(const QString &, const QDBusVariant &))));
 }
 
 bool AmarokPlayer::isPlaying() {
@@ -55,6 +60,19 @@ void AmarokPlayer::processPlaylist(QNetworkReply* reply) {
     }
 
     reply->deleteLater();
+}
+
+void AmarokPlayer::mprisPropertyChanged(const QString& name, const QDBusVariant& value)
+{
+    qDebug() << "Prop. changed! to: " << value.variant().toString();
+    if(name == "PlaybackStatus") {
+        QString state = value.variant().toString();
+
+        if(state == "Playing")
+            emit stateChanged(PlayingState);
+        else
+            emit stateChanged(StoppedState);
+    }
 }
 
 void AmarokPlayer::stop() {
