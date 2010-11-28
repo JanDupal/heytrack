@@ -24,6 +24,11 @@ VlcPlayer::VlcPlayer(QObject* parent): AbstractPlayer(parent) {
     tracklistInterface = new QDBusInterface("org.mpris.vlc", "/TrackList", "", QDBusConnection::sessionBus(), this);
 }
 
+bool VlcPlayer::isPlaying()
+{
+    return playerInterface->property("PlaybackStatus").toString() == "Playing";
+}
+
 void VlcPlayer::play(const QString& url) {
     /* Add track and start playing immediately */
     tracklistInterface->call("AddTrack", url, true);

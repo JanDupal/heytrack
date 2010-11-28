@@ -35,6 +35,8 @@ class AbstractPlayer: public QObject {
 
         inline AbstractPlayer(QObject* parent = 0): QObject(parent) {}
 
+        virtual bool isPlaying() = 0;
+
     public slots:
         /**
          * @brief Play given URL
