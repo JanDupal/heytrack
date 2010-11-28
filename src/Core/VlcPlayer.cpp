@@ -1,5 +1,6 @@
 /*
     Copyright © 2009, 2010 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2010 Jan Dupal <dupal.j@seznam.cz>
 
     This file is part of HeyTrack.
 
@@ -16,6 +17,9 @@
 #include "VlcPlayer.h"
 
 #include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusReply>
+
+#include "Mpris1.h"
 
 namespace HeyTrack { namespace Core {
 
@@ -24,9 +28,12 @@ VlcPlayer::VlcPlayer(QObject* parent): AbstractPlayer(parent) {
     tracklistInterface = new QDBusInterface("org.mpris.vlc", "/TrackList", "", QDBusConnection::sessionBus(), this);
 }
 
-bool VlcPlayer::isPlaying()
-{
-    return playerInterface->property("PlaybackStatus").toString() == "Playing";
+bool VlcPlayer::isPlaying() {
+    QDBusReply<Mpris1::Status> reply = playerInterface->call("GetStatus");
+
+    if(reply.isValid())
+        return reply.value().play == 0;
+    return false;
 }
 
 void VlcPlayer::play(const QString& url) {

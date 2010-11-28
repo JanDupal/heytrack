@@ -1,5 +1,6 @@
 /*
     Copyright © 2009, 2010 Vladimír Vondruš <mosra@centrum.cz>
+    Copyright © 2010 Jan Dupal <dupal.j@seznam.cz>
 
     This file is part of HeyTrack.
 
@@ -18,6 +19,7 @@
 #include "RockmaxServer.h"
 #include "SomaFmServer.h"
 #include "PhononPlayer.h"
+#include "Mpris1.h"
 
 /* D-BUS is Unix-only */
 #ifndef Q_WS_WIN
@@ -32,6 +34,8 @@ inline void registerEverything() {
     SERVER_REGISTER("Rockmax.cz", RockmaxServer)
     SERVER_REGISTER("SomaFM.com", SomaFmServer)
     PLAYER_REGISTER("Phonon", PhononPlayer)
+
+    qDBusRegisterMetaType<Mpris1::Status>();
 
     /* D-BUS is Unix-only */
     #ifndef Q_WS_WIN

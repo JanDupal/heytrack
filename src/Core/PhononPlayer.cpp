@@ -30,8 +30,7 @@ PhononPlayer::PhononPlayer(QObject* parent): AbstractPlayer(parent)
     Phonon::createPath(mo, ao);
 }
 
-bool PhononPlayer::isPlaying()
-{
+bool PhononPlayer::isPlaying() {
     return mo->state() == Phonon::PlayingState;
 }
 
